@@ -1,0 +1,51 @@
+# donwload boost
+include(FetchContent)
+set(BOOST_VERSION 1.79.0)
+
+set(BOOST_ENABLE_CMAKE ON) 
+FetchContent_Declare(
+    build_boost 
+    GIT_REPOSITORY https://github.com/boostorg/boost.git 
+    GIT_TAG boost-${BOOST_VERSION}
+) 
+FetchContent_GetProperties(build_boost BINARY_DIR BOOST_LIBRARY_DIR) 
+if(NOT build_boost_POPULATED) 
+    FetchContent_Populate(build_boost) 
+    add_subdirectory(
+        ${build_boost_SOURCE_DIR} 
+        ${build_boost_BINARY_DIR} 
+        EXCLUDE_FROM_ALL 
+    ) 
+endif() 
+
+# ExternalProject_Get_Property(boost install_dir)
+message (STATUS "Boost install dir ${build_boost_SOURCE_DIR}.")
+# set(BOOST_LIBRARY_DIR ${install_dir}/lib)
+# set(BOOST_INCLUDE_DIR ${install_dir}/include)
+
+# add the library that runs
+add_library(LibA liba.cpp)
+#ADD_DEPENDENCIES(LibA boost)
+target_link_libraries(LibA PRIVATE Boost::format) 
+
+# state that anybody linking to us needs to include the current source dir
+# to find liba.h, while we don't.
+target_include_directories(
+            LibA
+            INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
+            $<BUILD_INTERFACE:${BOOST_INCLUDE_DIR}>
+          )
+#add option for library
+option(USE_LIBA "Use LibA" ON)
+if(USE_LIBA)
+
+endif()
+
+# define the symbol stating we are using the declspec(dllexport) when
+# building on windows
+target_compile_definitions(LibA PRIVATE "EXPORTING_MYMATH")
+
+# install rules
+set(installable_libs LibA)
+install(TARGETS ${installable_libs} DESTINATION lib)
+install(FILES liba.h DESTINATION include/liba)
