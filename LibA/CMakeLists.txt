@@ -24,9 +24,9 @@ ExternalProject_Add (
     BUILD_COMMAND ${BOOST_BUILD_CMD} toolset=clang cxxflags=-stdlib=libc++ linkflags=-stdlib=libc++ --with-system --with-filesystem --with-thread --with-regex --with-iostreams link=static install --prefix=${CMAKE_INSTALL_PREFIX}
     INSTALL_COMMAND ""
     LOG_DOWNLOAD 1
-    LOG_UPDATE 0
+    LOG_UPDATE 1
     LOG_CONFIGURE 1
-    LOG_BUILD 0
+    LOG_BUILD 1
     LOG_INSTALL 1
     )
 
